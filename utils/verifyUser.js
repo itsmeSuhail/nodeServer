@@ -5,22 +5,22 @@ export const validUser = (req, res, next) => {
   let token = null;
   let headerToken = req.headers.Authentication?.split("").pop();
   if (headerToken) token = headerToken;
-  else token = req.cookies.varifiedUser;
+  else token = req.cookies.user;
   if (!token)
     return next(
-      new CustomError("bad credentials", 400, { user: "user is not verified" })
+      new CustomError({ user: "user is not verified" }, 401, )
     );
   const isValidToken = verifyToken(token);
   if (!isValidToken)
     return next(
-      new CustomError("session timeout", 400, {
+      new CustomError({
         tokenExpire: "your token has been expired",
-      })
+      }, 400 )
     );
-  const { id, user } = isValidToken;
+  const { id, username } = isValidToken;
   console.log(isValidToken, "Del");
-  if (id && user) return next();
+  if (id && username) return next();
   return next(
-    new CustomError("bad credentials", 400, { user: "user is not verified" })
+    new CustomError( { user: "user is not verified" }, 401)
   );
 };
